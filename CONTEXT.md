@@ -9,7 +9,7 @@ Tầm nhìn dài hạn: mở rộng ra nhiều brand và mô hình kinh doanh kh
 - Platform: PWA (Progressive Web App) — offline-first
 - Ngôn ngữ: HTML, CSS, JavaScript thuần (nâng lên framework sau nếu cần)
 - Lưu trữ: GitHub (code) + Google Drive (tài liệu, CONTEXT.md)
-- Môi trường: vscode.dev kết nối thẳng vào GitHub
+- Môi trường: vscode desktop kết nối thẳng vào GitHub
 
 ## Quyết định thiết kế đã chốt
 - UI mobile-first, tối ưu thao tác một tay
