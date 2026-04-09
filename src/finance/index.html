@@ -3,99 +3,152 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <title>FNB App — Tài chính</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
     body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a18;min-height:100dvh;display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
     .header{background:#fff;padding:10px 16px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #e8e6e0;flex-shrink:0}
     .header-left{display:flex;align-items:center;gap:10px}
-    .back-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid #e8e6e0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;color:#888;text-decoration:none}
-    .header-title{font-size:15px;font-weight:600}
-    .export-btn{padding:6px 14px;border-radius:20px;border:0.5px solid #e8e6e0;background:#f5f5f0;font-size:12px;font-weight:500;color:#888;cursor:pointer}
+    .back-btn{width:32px;height:32px;border-radius:50%;border:0.5px solid #e8e6e0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;text-decoration:none;flex-shrink:0}
+    .header-title{font-size:15px;font-weight:600;color:#1a1a18}
+    .export-btn{padding:6px 14px;border-radius:20px;border:0.5px solid #e8e6e0;background:#f5f5f0;font-size:12px;font-weight:500;color:#888;cursor:pointer;font-family:inherit}
+    .export-btn:active{background:#e8e6e0}
+
     .period-bar{background:#fff;padding:10px 14px;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;border-bottom:0.5px solid #e8e6e0;flex-shrink:0}
     .period-bar::-webkit-scrollbar{display:none}
-    .period-btn{padding:6px 14px;border-radius:20px;border:0.5px solid #d8d6d0;background:transparent;color:#888;font-size:13px;white-space:nowrap;cursor:pointer}
+    .period-btn{padding:6px 14px;border-radius:20px;border:0.5px solid #d8d6d0;background:transparent;color:#888;font-size:13px;white-space:nowrap;cursor:pointer;transition:all .15s;font-family:inherit}
     .period-btn.active{background:#1D9E75;border-color:#1D9E75;color:#fff}
+
     .date-nav{background:#fff;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid #e8e6e0;flex-shrink:0}
-    .nav-arrow{width:32px;height:32px;border-radius:50%;border:0.5px solid #e8e6e0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;color:#888;cursor:pointer}
-    .date-label{font-size:14px;font-weight:500}
-    .today-btn{font-size:12px;color:#1D9E75;background:none;border:none;cursor:pointer;padding:4px 8px}
+    .nav-arrow{width:32px;height:32px;border-radius:50%;border:0.5px solid #e8e6e0;background:#f5f5f0;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888}
+    .nav-arrow:active{background:#e8e6e0}
+    .date-label{font-size:14px;font-weight:500;color:#1a1a18}
+    .today-btn{font-size:12px;color:#1D9E75;background:none;border:none;cursor:pointer;font-family:inherit;padding:4px 8px}
+
+    /* CSS cho thanh lọc tuỳ chọn */
+    .custom-date-nav { background:#fff; padding:8px 16px; display:none; align-items:center; gap:8px; border-bottom:0.5px solid #e8e6e0; flex-shrink:0; }
+    .custom-date-nav input { flex:1; padding:8px 10px; border:0.5px solid #d1d5db; border-radius:8px; font-size:14px; outline:none; font-family:inherit; width: 100%;}
+    .custom-date-nav input:focus { border-color:#1D9E75; }
+    .custom-date-nav button { padding:8px 14px; background:#1D9E75; color:#fff; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; flex-shrink:0;}
+    .custom-date-nav button:active { background:#147a59; }
+
     .tabs{background:#fff;display:flex;border-bottom:0.5px solid #e8e6e0;flex-shrink:0}
-    .tab{flex:1;padding:10px 0;font-size:12px;font-weight:500;color:#888;text-align:center;cursor:pointer;border-bottom:2px solid transparent;background:none;border-top:none;border-left:none;border-right:none}
+    .tab{flex:1;padding:10px 0;font-size:12px;font-weight:500;color:#888;text-align:center;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;font-family:inherit;background:none;border-top:none;border-left:none;border-right:none;white-space:nowrap}
     .tab.active{color:#1D9E75;border-bottom-color:#1D9E75}
+
     .content{flex:1;overflow-y:auto;padding:12px 14px 32px;display:flex;flex-direction:column;gap:10px}
-    .card{background:#fff;border-radius:14px;border:0.5px solid #e8e6e0;overflow:hidden;margin-bottom:8px}
-    .card-header{padding:12px 14px;background:#f5f5f0;border-bottom:0.5px solid #e8e6e0;font-size:12px;font-weight:600;color:#888;text-transform:uppercase;display:flex;justify-content:space-between;align-items:center}
-    .row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid #e8e6e0}
-    .row:last-child{border-bottom:none}
-    .row.section{background:#f5f5f040;padding:6px 14px}
-    .label{font-size:13px;color:#1a1a18}
-    .label.muted{color:#888;font-size:12px}
-    .label.bold{font-weight:600;font-size:14px}
-    .val{font-size:13px;font-weight:500;text-align:right}
-    .val.green{color:#1D9E75}
-    .val.red{color:#E24B4A}
-    .val.blue{color:#378ADD}
-    .val.bold{font-size:15px;font-weight:700}
-    .val.muted{color:#888;font-size:12px}
+
+    .pl-card, .expense-card, .balance-card {background:#fff;border-radius:14px;border:0.5px solid #e8e6e0;overflow:hidden;margin-bottom:8px}
+    .pl-header, .card-header {padding:12px 14px;background:#f5f5f0;border-bottom:0.5px solid #e8e6e0;font-size:12px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
+    .pl-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:0.5px solid #e8e6e0}
+    .pl-row:last-child{border-bottom:none}
+    .pl-row.total{background:#f5f5f0}
+    .pl-row.profit{background:#E1F5EE20}
+    .pl-row.loss{background:#FCEBEB20}
+    .pl-row.section{background:#f5f5f040;padding:6px 14px}
+    .pl-label{font-size:13px;color:#1a1a18}
+    .pl-label.muted{color:#888;font-size:12px}
+    .pl-label.bold{font-weight:600;font-size:14px}
+    .pl-value{font-size:13px;font-weight:500;color:#1a1a18;text-align:right}
+    .pl-value.green{color:#1D9E75}
+    .pl-value.red{color:#E24B4A}
+    .pl-value.blue{color:#378ADD}
+    .pl-value.bold{font-size:15px;font-weight:700}
+    .pl-value.muted{color:#888;font-size:12px}
+    .pl-pct{font-size:11px;color:#888;text-align:right;margin-top:1px}
+
     .metrics-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     .metric-card{background:#fff;border-radius:14px;border:0.5px solid #e8e6e0;padding:13px 14px}
     .metric-card.full{grid-column:span 2}
-    .metric-label{font-size:11px;color:#888;margin-bottom:6px}
-    .metric-value{font-size:20px;font-weight:700}
+    .metric-label{font-size:11px;color:#888;font-weight:500;margin-bottom:6px}
+    .metric-value{font-size:20px;font-weight:700;color:#1a1a18}
+    .metric-value.green{color:#1D9E75}
+    .metric-value.red{color:#E24B4A}
+    .metric-value.blue{color:#378ADD}
     .metric-sub{font-size:12px;color:#888;margin-top:4px}
-    .action-btn{padding:5px 12px;border-radius:20px;border:0.5px solid #1D9E75;background:#E1F5EE;color:#085041;font-size:12px;font-weight:500;cursor:pointer}
+
+    .action-btn{padding:5px 12px;border-radius:20px;border:0.5px solid #1D9E75;background:#E1F5EE;color:#085041;font-size:12px;font-weight:500;cursor:pointer;font-family:inherit}
+    .action-btn:active{background:#9FE1CB}
     .action-btn.outline{background:transparent;border-color:#d8d6d0;color:#1a1a18}
+
     .item-row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:0.5px solid #e8e6e0;cursor:pointer}
+    .item-row:last-child{border-bottom:none}
     .item-icon{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .item-info{flex:1;min-width:0}
-    .item-name{font-size:13px;font-weight:500}
+    .item-name{font-size:13px;font-weight:500;color:#1a1a18}
     .item-sub{font-size:11px;color:#888;margin-top:1px}
+    .item-amount{font-size:13px;font-weight:500;color:#1a1a18;text-align:right}
+
+    .cogs-icon{font-size:18px;flex-shrink:0}
+    .cogs-cost{font-size:13px;font-weight:500;color:#1a1a18;text-align:right;min-width:80px}
+    .cogs-unit{font-size:11px;color:#888;text-align:right}
+
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:flex-end;justify-content:center}
     .overlay.show{display:flex}
-    .sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px;width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px;max-height:85dvh;overflow-y:auto}
-    .sheet-title{font-size:15px;font-weight:600}
+    .sheet{background:#fff;border-radius:20px 20px 0 0;padding:20px 20px 36px;width:100%;max-width:480px;display:flex;flex-direction:column;gap:14px;max-height:85dvh;overflow-y:auto}
+    .sheet-title{font-size:15px;font-weight:600;color:#1a1a18}
+    .sheet-sub{font-size:13px;color:#888;margin-top:-8px}
     .field{display:flex;flex-direction:column;gap:6px}
     .field label{font-size:12px;color:#888;font-weight:500}
-    .field input, .field select{width:100%;padding:11px 14px;border:0.5px solid #e8e6e0;border-radius:12px;font-size:15px;background:#f5f5f0}
-    .sheet-btn{padding:13px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer}
+    .field input,.field select{width:100%;padding:11px 14px;border:0.5px solid #e8e6e0;border-radius:12px;font-size:15px;color:#1a1a18;background:#f5f5f0;font-family:inherit}
+    .field input:focus,.field select:focus{outline:none;border-color:#1D9E75;background:#fff}
+    .sheet-btn{padding:13px;border-radius:12px;border:none;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit}
     .sheet-btn.primary{background:#1D9E75;color:#fff}
-    .sheet-btn.secondary{background:#f5f5f0;border:0.5px solid #e8e6e0}
+    .sheet-btn.secondary{background:#f5f5f0;color:#1a1a18;border:0.5px solid #e8e6e0}
     .sheet-btn.danger{background:#FCEBEB;color:#A32D2D}
-    .empty{padding:24px 0;text-align:center;color:#bbb;font-size:13px}
-    .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;opacity:0;transition:opacity .2s;z-index:400}
+
+    .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px 0;gap:8px;color:#bbb;font-size:13px}
+    .toast{position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#1a1a18;color:#fff;padding:8px 18px;border-radius:20px;font-size:13px;font-weight:500;opacity:0;transition:opacity .2s;pointer-events:none;white-space:nowrap;z-index:400}
+    .info-box{background:#E6F1FB;border-radius:10px;padding:10px 14px;font-size:12px;color:#0C447C;line-height:1.6;margin-bottom:8px}
   </style>
 </head>
 <body>
 
 <div class="header">
   <div class="header-left">
-    <a href="../pos/index.html" class="back-btn">❮</a>
+    <a href="../pos/index.html" class="back-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    </a>
     <span class="header-title">Tài chính</span>
   </div>
+  <button class="export-btn" onclick="exportCSV()">Xuất CSV</button>
 </div>
 
 <div class="period-bar">
-  <button class="period-btn active" id="p-day" onclick="setPeriod('day')">Hôm nay</button>
-  <button class="period-btn" id="p-week" onclick="setPeriod('week')">Tuần này</button>
-  <button class="period-btn" id="p-month" onclick="setPeriod('month')">Tháng này</button>
-  <button class="period-btn" id="p-year" onclick="setPeriod('year')">Năm</button>
+  <button class="period-btn active" id="p-day"   onclick="setPeriod('day')">Hôm nay</button>
+  <button class="period-btn"        id="p-week"  onclick="setPeriod('week')">Tuần này</button>
+  <button class="period-btn"        id="p-month" onclick="setPeriod('month')">Tháng này</button>
+  <button class="period-btn"        id="p-year"  onclick="setPeriod('year')">Năm này</button>
+  <button class="period-btn"        id="p-custom" onclick="setPeriod('custom')">Tuỳ chọn</button>
 </div>
 
 <div class="date-nav" id="dateNav">
-  <button class="nav-arrow" onclick="shiftPeriod(-1)">❮</button>
+  <button class="nav-arrow" onclick="shiftPeriod(-1)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
   <span class="date-label" id="dateLabel"></span>
-  <div style="display:flex;gap:6px">
+  <div style="display:flex;align-items:center;gap:6px">
     <button class="today-btn" onclick="goToday()">Hôm nay</button>
-    <button class="nav-arrow" onclick="shiftPeriod(1)">❯</button>
+    <button class="nav-arrow" onclick="shiftPeriod(1)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
   </div>
 </div>
 
+<div class="custom-date-nav" id="customDateNav">
+  <input type="date" id="customFrom">
+  <span style="color:#888;">-</span>
+  <input type="date" id="customTo">
+  <button onclick="applyCustomDate()">Lọc</button>
+</div>
+
 <div class="tabs">
-  <button class="tab active" id="tab1" onclick="switchTab(1)">P&L</button>
-  <button class="tab" id="tab2" onclick="switchTab(2)">Chi phí</button>
-  <button class="tab" id="tab3" onclick="switchTab(3)">Giá vốn</button>
-  <button class="tab" id="tab4" onclick="switchTab(4)">Vốn & Tài sản</button>
+  <button class="tab active" id="tab1" onclick="switchTab(1)">P&amp;L</button>
+  <button class="tab"        id="tab2" onclick="switchTab(2)">Chi phí</button>
+  <button class="tab"        id="tab3" onclick="switchTab(3)">Giá vốn</button>
+  <button class="tab"        id="tab4" onclick="switchTab(4)">Vốn & Tài sản</button>
 </div>
 
 <div class="content" id="content"></div>
@@ -103,17 +156,17 @@
 <div class="overlay" id="expenseOverlay" onclick="hideExpense()">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-title" id="expenseSheetTitle">Thêm chi phí</div>
-    <div class="field"><label>Tên</label><input type="text" id="expName"></div>
+    <div class="field"><label>Tên chi phí</label><input type="text" id="expName" placeholder="VD: Tiền mặt bằng, Điện nước..."></div>
     <div class="field"><label>Danh mục</label>
       <select id="expCat"><option value="van_hanh">Vận hành</option><option value="nhan_su">Nhân sự</option><option value="khac">Khác</option></select>
     </div>
     <div class="field"><label>Chu kỳ</label>
-      <select id="expType"><option value="once">1 lần</option><option value="daily">Hàng ngày</option><option value="monthly">Hàng tháng</option></select>
+      <select id="expType"><option value="once">Phát sinh 1 lần</option><option value="daily">Cố định hàng ngày</option><option value="weekly">Cố định hàng tuần</option><option value="monthly">Cố định hàng tháng</option></select>
     </div>
-    <div class="field"><label>Số tiền (₫)</label><input type="number" id="expAmount"></div>
-    <div class="field"><label>Ngày</label><input type="date" id="expDate"></div>
-    <button class="sheet-btn primary" onclick="saveExpense()">Lưu</button>
-    <button class="sheet-btn danger" id="deleteExpBtn" style="display:none" onclick="deleteExpense()">Xoá</button>
+    <div class="field"><label>Số tiền (₫)</label><input type="number" id="expAmount" placeholder="0"></div>
+    <div class="field" id="expDateField"><label>Ngày bắt đầu / Ngày chi</label><input type="date" id="expDate"></div>
+    <button class="sheet-btn primary" onclick="saveExpense()">Lưu chi phí</button>
+    <button class="sheet-btn danger"  id="deleteExpBtn" style="display:none" onclick="deleteExpense()">Xoá</button>
     <button class="sheet-btn secondary" onclick="hideExpense()">Huỷ</button>
   </div>
 </div>
@@ -121,24 +174,37 @@
 <div class="overlay" id="capitalOverlay" onclick="hideCapital()">
   <div class="sheet" onclick="event.stopPropagation()">
     <div class="sheet-title">Quản lý dòng vốn</div>
-    <div class="field"><label>Loại</label><select id="capType"><option value="in">Góp vốn</option><option value="out">Rút vốn</option></select></div>
-    <div class="field"><label>Số tiền</label><input type="number" id="capAmount"></div>
-    <div class="field"><label>Ghi chú</label><input type="text" id="capNote"></div>
-    <div class="field"><label>Ngày</label><input type="date" id="capDate"></div>
-    <button class="sheet-btn primary" onclick="saveCapital()">Lưu</button>
+    <div class="field"><label>Loại giao dịch</label><select id="capType"><option value="in">Góp vốn / Nạp tiền</option><option value="out">Rút vốn / Lấy lãi</option></select></div>
+    <div class="field"><label>Số tiền (₫)</label><input type="number" id="capAmount" placeholder="0"></div>
+    <div class="field"><label>Ghi chú</label><input type="text" id="capNote" placeholder="VD: Vốn ban đầu..."></div>
+    <div class="field"><label>Ngày thực hiện</label><input type="date" id="capDate"></div>
+    <button class="sheet-btn primary" onclick="saveCapital()">Lưu giao dịch</button>
     <button class="sheet-btn secondary" onclick="hideCapital()">Huỷ</button>
   </div>
 </div>
 
 <div class="overlay" id="assetOverlay" onclick="hideAsset()">
   <div class="sheet" onclick="event.stopPropagation()">
-    <div class="sheet-title">Mua Tài sản</div>
-    <div class="field"><label>Tên</label><input type="text" id="assetName"></div>
-    <div class="field"><label>Giá trị (₫)</label><input type="number" id="assetAmount"></div>
-    <div class="field"><label>Số tháng khấu hao</label><input type="number" id="assetMonths" value="12"></div>
-    <div class="field"><label>Ngày</label><input type="date" id="assetDate"></div>
-    <button class="sheet-btn primary" onclick="saveAsset()">Lưu</button>
+    <div class="sheet-title">Mua Tài sản cố định</div>
+    <div class="sheet-sub">Giá trị tài sản sẽ được khấu hao dần vào chi phí</div>
+    <div class="field"><label>Tên tài sản</label><input type="text" id="assetName" placeholder="VD: Xe cà phê..."></div>
+    <div class="field"><label>Giá trị mua (₫)</label><input type="number" id="assetAmount" placeholder="0"></div>
+    <div class="field"><label>Thời gian khấu hao (Tháng)</label><input type="number" id="assetMonths" placeholder="12" value="12"></div>
+    <div class="field"><label>Ngày mua</label><input type="date" id="assetDate"></div>
+    <button class="sheet-btn primary" onclick="saveAsset()">Lưu tài sản</button>
     <button class="sheet-btn secondary" onclick="hideAsset()">Huỷ</button>
+  </div>
+</div>
+
+<div class="overlay" id="cogOverlay" onclick="hideCog()">
+  <div class="sheet" onclick="event.stopPropagation()">
+    <div class="sheet-title">Giá vốn nguyên liệu</div>
+    <div class="sheet-sub" id="cogSubtitle"></div>
+    <div class="field"><label>Giá nhập lần này (₫ / đơn vị)</label><input type="number" id="cogPrice" placeholder="0"></div>
+    <div class="field"><label>Số lượng nhập</label><input type="number" id="cogQty" placeholder="0"></div>
+    <div id="cogCurrentInfo" style="font-size:13px;color:#888;background:#f5f5f0;border-radius:10px;padding:10px 14px"></div>
+    <button class="sheet-btn primary" onclick="saveCog()">Cập nhật</button>
+    <button class="sheet-btn secondary" onclick="hideCog()">Huỷ</button>
   </div>
 </div>
 
@@ -146,144 +212,374 @@
 
 <script src="../auth/auth.js"></script>
 <script>
-  // ── DATA & CONFIG ──
-  const MENU = [
-    {id:1, price:18000, ingredients:[{id:'cot_ca_phe',amount:60}]},
-    {id:2, price:20000, ingredients:[{id:'cot_ca_phe',amount:50},{id:'sua_dac',amount:20}]}
-  ];
-  const SEMI_RECIPES = [
-    {id:'cot_ca_phe', yields:500, recipe:[{id:'ca_phe_bot',amount:200}]}
+  Auth.require('finance');
+
+  const RAW_ITEMS = [
+    {id:'ca_phe_bot', name:'Cà phê bột', icon:'☕', unit:'g'},
+    {id:'cacao_bot',  name:'Cacao bột',   icon:'🍫', unit:'g'},
+    {id:'matcha_bot', name:'Matcha bột',  icon:'🍵', unit:'g'},
+    {id:'bot_kem_muoi',name:'Bột kem muối',icon:'🧂', unit:'g'},
+    {id:'sua_dac',    name:'Sữa đặc',     icon:'🥛', unit:'g'},
+    {id:'sua_tuoi',   name:'Sữa tươi',    icon:'🍼', unit:'ml'},
+    {id:'duong',      name:'Đường',        icon:'🍬', unit:'g'},
+    {id:'nuoc',       name:'Nước',         icon:'💧', unit:'ml'},
   ];
 
-  let period='month', cursor=new Date(), activeTab=1;
-  let editingExpId=null;
-  cursor.setHours(0,0,0,0);
-  const fmt = n => (n||0).toLocaleString('vi-VN') + ' ₫';
+  const SEMI_RECIPES = [
+    {id:'cot_ca_phe',  yields:500,  recipe:[{id:'ca_phe_bot',amount:200},{id:'nuoc',amount:650}]},
+    {id:'cot_cacao',   yields:1000, recipe:[{id:'cacao_bot',amount:200},{id:'nuoc',amount:1000}]},
+    {id:'cot_matcha',  yields:1000, recipe:[{id:'matcha_bot',amount:100},{id:'nuoc',amount:1000}]},
+    {id:'kem_muoi',    yields:300,  recipe:[{id:'bot_kem_muoi',amount:100},{id:'sua_tuoi',amount:200}]},
+    {id:'nuoc_duong',  yields:1000, recipe:[{id:'duong',amount:600},{id:'nuoc',amount:1000}]},
+  ];
+
+  const MENU = [
+    {id:1, name:'Cà phê đen',      price:18000, ingredients:[{id:'cot_ca_phe',amount:60},{id:'nuoc_duong',amount:20}]},
+    {id:2, name:'Cà phê sữa',      price:20000, ingredients:[{id:'cot_ca_phe',amount:50},{id:'sua_dac',amount:20}]},
+    {id:3, name:'Cà phê sữa tươi', price:22000, ingredients:[{id:'cot_ca_phe',amount:30},{id:'sua_dac',amount:30},{id:'sua_tuoi',amount:70}]},
+    {id:4, name:'Cà phê kem muối', price:24000, ingredients:[{id:'cot_ca_phe',amount:50},{id:'sua_dac',amount:20},{id:'kem_muoi',amount:30}]},
+    {id:5, name:'Matcha latte',    price:23000, ingredients:[{id:'cot_matcha',amount:40},{id:'sua_dac',amount:30},{id:'sua_tuoi',amount:70}]},
+    {id:6, name:'Cacao latte',     price:23000, ingredients:[{id:'cot_cacao',amount:40},{id:'sua_dac',amount:30},{id:'sua_tuoi',amount:70}]},
+  ];
+
+  const CAT_COLORS = { van_hanh:'#378ADD', nhan_su:'#7F77DD', khau_hao:'#BA7517', khac:'#888' };
+  const CAT_NAMES  = { van_hanh:'Vận hành', nhan_su:'Nhân sự', khau_hao:'Khấu hao', khac:'Khác' };
+  const TYPE_NAMES = { daily:'Hàng ngày', weekly:'Hàng tuần', monthly:'Hàng tháng', once:'Một lần' };
+
+  const fmt    = n => n.toLocaleString('vi-VN') + ' ₫';
   const toDateInput = d => { const dd=new Date(d); return `${dd.getFullYear()}-${String(dd.getMonth()+1).padStart(2,'0')}-${String(dd.getDate()).padStart(2,'0')}`; };
 
-  // ── STORAGE ──
-  const getOrders = () => JSON.parse(localStorage.getItem('fnb_orders') || '[]');
-  const getExpenses = () => JSON.parse(localStorage.getItem('fnb_expenses') || '[]');
-  const setExpenses = d => localStorage.setItem('fnb_expenses', JSON.stringify(d));
-  const getCogPrices = () => JSON.parse(localStorage.getItem('fnb_cog_prices') || '{}');
-  const getCapitals = () => JSON.parse(localStorage.getItem('fnb_capitals') || '[]');
-  const setCapitals = d => localStorage.setItem('fnb_capitals', JSON.stringify(d));
-  const getAssets = () => JSON.parse(localStorage.getItem('fnb_assets') || '[]');
-  const setAssets = d => localStorage.setItem('fnb_assets', JSON.stringify(d));
+  let period = 'day', cursor = new Date(), activeTab = 1;
+  let customFrom = null, customTo = null;
+  let editingExpId = null, cogItemId = null;
+  cursor.setHours(0,0,0,0);
 
-  // ── LOGIC ──
+  const getOrders    = () => JSON.parse(localStorage.getItem('fnb_orders')     || '[]');
+  const getExpenses  = () => JSON.parse(localStorage.getItem('fnb_expenses')  || '[]');
+  const setExpenses  = d => localStorage.setItem('fnb_expenses',  JSON.stringify(d));
+  const getCogPrices = () => JSON.parse(localStorage.getItem('fnb_cog_prices') || '{}');
+  const setCogPrices = d => localStorage.setItem('fnb_cog_prices', JSON.stringify(d));
+  const getCapitals  = () => JSON.parse(localStorage.getItem('fnb_capitals')  || '[]');
+  const setCapitals  = d => localStorage.setItem('fnb_capitals',  JSON.stringify(d));
+  const getAssets    = () => JSON.parse(localStorage.getItem('fnb_assets')    || '[]');
+  const setAssets    = d => localStorage.setItem('fnb_assets',    JSON.stringify(d));
+
   function getRange(){
-    const d=new Date(cursor); let from, to;
-    if(period==='day'){from=new Date(d); from.setHours(0,0,0,0); to=new Date(d); to.setHours(23,59,59,999);}
-    else if(period==='month'){from=new Date(d.getFullYear(),d.getMonth(),1); to=new Date(d.getFullYear(),d.getMonth()+1,0,23,59,59,999);}
-    else {from=new Date(d); from.setHours(0,0,0,0); to=new Date(d); to.setHours(23,59,59,999);}
+    const d = new Date(cursor);
+    let from, to;
+    if(period==='day'){
+      from=new Date(d); from.setHours(0,0,0,0);
+      to=new Date(d);   to.setHours(23,59,59,999);
+    } else if(period==='week'){
+      const day=d.getDay(), diff=day===0?-6:1-day;
+      from=new Date(d); from.setDate(d.getDate()+diff); from.setHours(0,0,0,0);
+      to=new Date(from); to.setDate(from.getDate()+6); to.setHours(23,59,59,999);
+    } else if(period==='month'){
+      from=new Date(d.getFullYear(),d.getMonth(),1);
+      to=new Date(d.getFullYear(),d.getMonth()+1,0,23,59,59,999);
+    } else if(period==='year'){
+      from=new Date(d.getFullYear(),0,1);
+      to=new Date(d.getFullYear(),11,31,23,59,59,999);
+    } else {
+      from=customFrom||new Date(d); from.setHours(0,0,0,0);
+      to=customTo||new Date(d);     to.setHours(23,59,59,999);
+    }
     return {from,to};
   }
-  function setPeriod(p){ period=p; ['day','week','month','year'].forEach(x=> document.getElementById('p-'+x).classList.toggle('active',x===p)); cursor=new Date(); render(); }
-  function shiftPeriod(dir){ if(period==='day')cursor.setDate(cursor.getDate()+dir); else if(period==='month')cursor.setMonth(cursor.getMonth()+dir); render(); }
-  function goToday(){ cursor=new Date(); render(); }
-  function switchTab(n){ activeTab=n; [1,2,3,4].forEach(i=>document.getElementById('tab'+i).classList.toggle('active',i===n)); render(); }
 
-  function calcExpenses(from, to){
-    const expenses = getExpenses(); const assets = getAssets();
-    const days = Math.max(1, Math.round((to-from)/(1000*60*60*24))+1);
-    let totalOpex = 0;
-    expenses.forEach(e=>{
-      let amt=0; const d=new Date(e.date);
-      if(e.type==='once' && d>=from && d<=to) amt=e.amount;
-      else if(d<=to) { if(e.type==='daily')amt=e.amount*days; else if(e.type==='monthly')amt=e.amount*Math.max(1,Math.round(days/30)); }
-      totalOpex += amt;
-    });
-    let totalDep = 0;
-    assets.forEach(a=>{
-      if(a.months>0 && new Date(a.date)<=to) {
-        totalDep += (a.amount/a.months) * Math.max(1,Math.round(days/30));
-      }
-    });
-    return Math.round(totalOpex + totalDep);
-  }
+  function setPeriod(p){
+    period=p;
+    ['day','week','month','year','custom'].forEach(x=> document.getElementById('p-'+x).classList.toggle('active',x===p));
+    
+    document.getElementById('dateNav').style.display = p==='custom'?'none':'flex';
+    document.getElementById('customDateNav').style.display = p==='custom'?'flex':'none';
 
-  function calcBalance(){
-    let inC=0, outC=0; getCapitals().forEach(c=>{ if(c.type==='in')inC+=c.amount; else outC+=c.amount; });
-    const netCapital = inC - outC;
-    const totalAsset = getAssets().reduce((s,a)=>s+a.amount, 0);
-    // Tính lợi nhuận đơn giản = (Doanh thu - CP thủ công). Note: Lẽ ra cần hàm all-time.
-    let manualOpex=0; getExpenses().forEach(e=> { if(e.type==='once') manualOpex+=e.amount; else if(e.type==='monthly') manualOpex+=e.amount; });
-    const rev = getOrders().reduce((s,o)=>s+o.total,0);
-    const cashOnHand = netCapital + rev - manualOpex - totalAsset;
-    return {netCapital, totalAsset, cashOnHand};
-  }
-
-  // ── RENDER ──
-  function render(){
-    const {from, to} = getRange();
-    document.getElementById('dateLabel').textContent = period==='day'?from.toLocaleDateString('vi-VN'):from.toLocaleDateString('vi-VN',{month:'long',year:'numeric'});
-    const el = document.getElementById('content');
-    if(activeTab===1){
-      const orders = getOrders().filter(o=>{const d=new Date(o.ts); return d>=from&&d<=to;});
-      const rev = orders.reduce((s,o)=>s+o.total,0);
-      const opex = calcExpenses(from, to);
-      const net = rev - opex;
-      el.innerHTML = `
-        <div class="metrics-grid">
-          <div class="metric-card full"><div class="metric-label">Lợi Nhuận Thuần</div><div class="metric-value ${net>=0?'green':'red'}">${fmt(net)}</div></div>
-        </div>
-        <div class="card">
-          <div class="card-header">P&L Rút Gọn</div>
-          <div class="row"><span class="label">Doanh thu</span><span class="val green">${fmt(rev)}</span></div>
-          <div class="row"><span class="label">Chi phí (Opex & Khấu hao)</span><span class="val red">-${fmt(opex)}</span></div>
-        </div>
-      `;
-    } else if(activeTab===2){
-      el.innerHTML = `<div class="card"><div class="card-header"><span>Chi Phí</span><button class="action-btn" onclick="showExpense()">+ Thêm</button></div>
-        ${getExpenses().map(e=>`<div class="item-row" onclick="showExpense('${e.id}')"><div class="item-info"><div class="item-name">${e.name}</div><div class="item-sub">${e.type}</div></div><div class="val">${fmt(e.amount)}</div></div>`).join('')}</div>`;
-    } else if(activeTab===3){
-      el.innerHTML = `<div class="card"><div class="card-header">Giá Vốn (Đang lấy từ kho)</div><div class="empty">Dữ liệu được cập nhật từ màn hình POS.</div></div>`;
+    if(p === 'custom') {
+        if(!document.getElementById('customFrom').value) document.getElementById('customFrom').value = toDateInput(new Date());
+        if(!document.getElementById('customTo').value) document.getElementById('customTo').value = toDateInput(new Date());
+        applyCustomDate();
     } else {
-      const bs = calcBalance();
-      el.innerHTML = `
-        <div class="metrics-grid"><div class="metric-card full"><div class="metric-label">Tiền mặt hiện tại (Ước tính)</div><div class="metric-value blue">${fmt(bs.cashOnHand)}</div></div></div>
-        <div class="card"><div class="card-header"><span>Nguồn Vốn</span><button class="action-btn" onclick="showCapital()">+ Quản lý</button></div>
-          ${getCapitals().map(c=>`<div class="item-row"><div class="item-info"><div class="item-name">${c.note||(c.type==='in'?'Góp':'Rút')}</div></div><div class="val ${c.type==='in'?'green':'red'}">${fmt(c.amount)}</div></div>`).join('')}</div>
-        <div class="card"><div class="card-header"><span>Tài Sản</span><button class="action-btn" onclick="showAsset()">+ Mua</button></div>
-          ${getAssets().map(a=>`<div class="item-row"><div class="item-info"><div class="item-name">${a.name}</div><div class="item-sub">Khấu hao ${a.months}T</div></div><div class="val">${fmt(a.amount)}</div></div>`).join('')}</div>
-      `;
+        cursor=new Date(); cursor.setHours(0,0,0,0);
+        render();
     }
   }
 
-  // ── OVERLAYS ──
+  function applyCustomDate() {
+      const f = document.getElementById('customFrom').value;
+      const t = document.getElementById('customTo').value;
+      if(f && t) {
+          customFrom = new Date(f); customFrom.setHours(0,0,0,0);
+          customTo = new Date(t); customTo.setHours(23,59,59,999);
+          if(customFrom > customTo) return toast('Ngày bắt đầu phải nhỏ hơn ngày kết thúc!');
+          render();
+      }
+  }
+
+  function shiftPeriod(dir){
+    if(period==='day')        cursor.setDate(cursor.getDate()+dir);
+    else if(period==='week')  cursor.setDate(cursor.getDate()+dir*7);
+    else if(period==='month') cursor.setMonth(cursor.getMonth()+dir);
+    else if(period==='year')  cursor.setFullYear(cursor.getFullYear()+dir);
+    render();
+  }
+  function goToday(){ cursor=new Date(); cursor.setHours(0,0,0,0); render(); }
+
+  function switchTab(n){
+    activeTab=n;
+    [1,2,3,4].forEach(i=>document.getElementById('tab'+i).classList.toggle('active',i===n));
+    render();
+  }
+
+  function calcRevenue(orders){ return orders.reduce((s,o)=>s+o.total,0); }
+
+  function calcCOGS(orders){
+    const prices = getCogPrices();
+    let total = 0;
+    orders.forEach(o=>{
+      (o.items||[]).forEach(item=>{
+        const menuItem = MENU.find(m=>m.id===item.id);
+        if(!menuItem) return;
+        let costPerUnit = 0;
+        menuItem.ingredients.forEach(ing=>{
+          const semi = SEMI_RECIPES.find(s=>s.id===ing.id);
+          if(semi){
+            semi.recipe.forEach(r=>{
+              const rawPrice = prices[r.id]?.avgCost || 0;
+              costPerUnit += rawPrice * (r.amount / semi.yields) * ing.amount;
+            });
+          } else {
+            const rawPrice = prices[ing.id]?.avgCost || 0;
+            costPerUnit += rawPrice * ing.amount;
+          }
+        });
+        total += costPerUnit * item.qty;
+      });
+    });
+    return Math.round(total);
+  }
+
+  function calcExpenses(from, to){
+    const expenses = getExpenses();
+    const assets = getAssets();
+    const days = Math.max(1, Math.round((to-from)/(1000*60*60*24))+1);
+    
+    let totalOpex = 0, totalDepreciation = 0; let byCat = {};
+    expenses.forEach(exp=>{
+      let amt = 0; const d = new Date(exp.date);
+      if(exp.type==='once'){ if(d>=from && d<=to) amt = exp.amount; } 
+      else if(d <= to){ 
+        if(exp.type==='daily') amt = exp.amount * days;
+        else if(exp.type==='weekly') amt = exp.amount * Math.ceil(days/7);
+        else if(exp.type==='monthly') amt = exp.amount * Math.max(1, Math.round(days/30));
+      }
+      if(amt > 0) { totalOpex += amt; byCat[exp.cat] = (byCat[exp.cat]||0) + amt; }
+    });
+
+    assets.forEach(asset => {
+      const pDate = new Date(asset.date);
+      if(asset.months > 0 && pDate <= to) {
+        const eDate = new Date(pDate); eDate.setMonth(eDate.getMonth() + parseInt(asset.months));
+        if(from < eDate) {
+          const depAmt = (asset.amount / asset.months) * Math.max(1, Math.round(days/30));
+          totalDepreciation += depAmt; byCat['khau_hao'] = (byCat['khau_hao']||0) + Math.round(depAmt);
+        }
+      }
+    });
+    return { total: Math.round(totalOpex + totalDepreciation), byCat };
+  }
+
+  function calcBalanceSheet() {
+    const capitals = getCapitals();
+    let totalCapIn = 0, totalCapOut = 0;
+    capitals.forEach(c => { if(c.type==='in') totalCapIn+=c.amount; else totalCapOut+=c.amount; });
+    const netCapital = totalCapIn - totalCapOut;
+    const assets = getAssets();
+    let totalAssetCost = assets.reduce((s, a) => s + a.amount, 0);
+
+    const allOrders = getOrders();
+    const allRev = calcRevenue(allOrders);
+    const allCOGS = calcCOGS(allOrders);
+    
+    let allOpexManual = 0;
+    getExpenses().forEach(e => {
+        const start = new Date(e.date); const now = new Date();
+        const days = Math.max(1, Math.round((now-start)/(1000*60*60*24)));
+        if(e.type==='once') allOpexManual += e.amount;
+        else if(e.type==='daily') allOpexManual += e.amount * days;
+        else if(e.type==='weekly') allOpexManual += e.amount * Math.ceil(days/7);
+        else if(e.type==='monthly') allOpexManual += e.amount * Math.ceil(days/30);
+    });
+
+    const cashOnHand = netCapital + (allRev - allCOGS - allOpexManual) - totalAssetCost;
+    return { netCapital, totalAssetCost, cashOnHand };
+  }
+
+  function render(){
+    const {from, to} = getRange();
+    let label = '';
+    if(period==='day') label = from.toLocaleDateString('vi-VN', {day:'numeric', month:'numeric', year:'numeric'});
+    else if(period==='week') label = `${from.toLocaleDateString('vi-VN',{day:'numeric',month:'numeric'})} — ${to.toLocaleDateString('vi-VN',{day:'numeric',month:'numeric',year:'numeric'})}`;
+    else if(period==='month') label = from.toLocaleDateString('vi-VN',{month:'long',year:'numeric'});
+    else if(period==='year') label = `Năm ${from.getFullYear()}`;
+    else if(period==='custom') {
+        const f = customFrom || new Date(); const t = customTo || new Date();
+        label = `${f.toLocaleDateString('vi-VN')} — ${t.toLocaleDateString('vi-VN')}`;
+    }
+    
+    if(period !== 'custom') document.getElementById('dateLabel').textContent = label;
+
+    const el = document.getElementById('content');
+    if(activeTab===1) renderPL(el, from, to);
+    else if(activeTab===2) renderExpensesTab(el, from, to);
+    else if(activeTab===3) renderCOGSTab(el);
+    else renderBalanceTab(el);
+  }
+
+  function renderPL(el, from, to){
+    const orders = getOrders().filter(o=>{const d=new Date(o.ts); return d>=from&&d<=to;});
+    const revenue = calcRevenue(orders);
+    const cogs = calcCOGS(orders);
+    const grossProfit = revenue - cogs;
+    const grossMargin = revenue>0 ? grossProfit/revenue*100 : 0;
+    const { total: opex, byCat } = calcExpenses(from, to);
+    const netProfit = grossProfit - opex;
+    const netMargin = revenue>0 ? netProfit/revenue*100 : 0;
+
+    el.innerHTML = `
+      <div class="metrics-grid">
+        <div class="metric-card full">
+          <div class="metric-label">Doanh thu thuần</div>
+          <div class="metric-value green">${fmt(revenue)}</div>
+          <div class="metric-sub">${orders.length} đơn hàng</div>
+        </div>
+        <div class="metric-card"><div class="metric-label">Lãi gộp</div><div class="metric-value${grossProfit>=0?' green':' red'}">${fmt(grossProfit)}</div><div class="metric-sub">Biên ${grossMargin.toFixed(1)}%</div></div>
+        <div class="metric-card"><div class="metric-label">Lãi ròng</div><div class="metric-value${netProfit>=0?' green':' red'}">${fmt(netProfit)}</div><div class="metric-sub">Biên ${netMargin.toFixed(1)}%</div></div>
+      </div>
+      <div class="pl-card">
+        <div class="pl-header">Báo cáo Lãi Lỗ (P&L) chi tiết</div>
+        <div class="pl-row"><span class="pl-label bold">Doanh thu</span><div class="pl-value bold green">${fmt(revenue)}</div></div>
+        <div class="pl-row section"><span class="pl-label muted">Giá vốn hàng bán (COGS)</span><span class="pl-value muted">${fmt(cogs)}</span></div>
+        <div class="pl-row"><span class="pl-label bold">Lãi gộp</span><div><div class="pl-value bold${grossProfit>=0?' green':' red'}">${fmt(grossProfit)}</div><div class="pl-pct">Biên gộp ${grossMargin.toFixed(1)}%</div></div></div>
+        <div class="pl-row section"><span class="pl-label muted">Chi phí vận hành & Khấu hao (OPEX)</span><span class="pl-value muted">${fmt(opex)}</span></div>
+        ${Object.entries(byCat).map(([cat,amt])=>`<div class="pl-row" style="padding:7px 14px 7px 24px"><span class="pl-label muted" style="font-size:12px">— ${CAT_NAMES[cat]||cat}</span><span class="pl-value muted">${fmt(amt)}</span></div>`).join('')}
+        <div class="pl-row${netProfit>=0?' profit':' loss'}"><span class="pl-label bold">Lãi ròng</span><div><div class="pl-value bold${netProfit>=0?' green':' red'}">${fmt(netProfit)}</div><div class="pl-pct">Biên ròng ${netMargin.toFixed(1)}%</div></div></div>
+      </div>
+    `;
+  }
+
+  function renderExpensesTab(el, from, to){
+    const expenses = getExpenses();
+    el.innerHTML = `
+      <div class="expense-card">
+        <div class="card-header"><span>Danh sách Chi phí</span><button class="action-btn" onclick="showExpense()">+ Thêm</button></div>
+        ${expenses.length===0 ? `<div class="empty">Chưa có chi phí</div>` : 
+          expenses.map(exp=>`
+          <div class="item-row" onclick="showExpense('${exp.id}')">
+            <div class="item-icon" style="background:${CAT_COLORS[exp.cat]||'#888'}"></div>
+            <div class="item-info">
+              <div class="item-name">${exp.name}</div>
+              <div class="item-sub">${CAT_NAMES[exp.cat]} · Bắt đầu: ${new Date(exp.date).toLocaleDateString('vi-VN')}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="item-amount">${fmt(exp.amount)}</div><div style="font-size:11px;color:#888">${TYPE_NAMES[exp.type]}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="info-box">Lưu ý: Khấu hao tài sản được tự động cộng vào Báo cáo P&L, không hiển thị trong danh sách này.</div>
+    `;
+  }
+
+  function renderCOGSTab(el){
+    const prices = getCogPrices();
+    el.innerHTML = `
+      <div class="info-box">Nhấn vào từng nguyên liệu để cập nhật giá nhập kho mới (Bình quân gia quyền).</div>
+      <div class="pl-card"><div class="pl-header">Giá vốn nguyên liệu thô</div>
+        ${RAW_ITEMS.map(item=>{
+          const p = prices[item.id]||{avgCost:0, totalQty:0};
+          return `<div class="item-row" onclick="showCog('${item.id}')">
+            <span class="cogs-icon">${item.icon}</span>
+            <div class="item-info"><div class="item-name">${item.name}</div><div class="item-sub">Đã nhập kho: ${p.totalQty||0} ${item.unit}</div></div>
+            <div><div class="cogs-cost">${p.avgCost>0 ? fmt(Math.round(p.avgCost*1000)) : 'Chưa có'}</div><div class="cogs-unit">${p.avgCost>0 ? `₫ / 1000${item.unit}` : ''}</div></div>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderBalanceTab(el){
+    const bs = calcBalanceSheet(); const capitals = getCapitals(); const assets = getAssets();
+    el.innerHTML = `
+      <div class="metrics-grid"><div class="metric-card full"><div class="metric-label">Tiền mặt hiện tại (Ước tính)</div><div class="metric-value blue">${fmt(bs.cashOnHand)}</div><div class="metric-sub">Bao gồm vốn + lợi nhuận tích lũy - tiền mua tài sản</div></div></div>
+      <div class="balance-card"><div class="card-header"><span>Nguồn Vốn (${fmt(bs.netCapital)})</span><button class="action-btn outline" onclick="showCapital()">+ Quản lý Vốn</button></div>
+        ${capitals.length===0 ? `<div class="empty">Chưa có giao dịch vốn</div>` : capitals.slice().reverse().map(c=>`<div class="item-row"><div class="item-icon" style="background:${c.type==='in'?'#1D9E75':'#E24B4A'}"></div><div class="item-info"><div class="item-name">${c.note || (c.type==='in'?'Góp vốn':'Rút vốn')}</div><div class="item-sub">${new Date(c.date).toLocaleDateString('vi-VN')}</div></div><div class="item-amount ${c.type==='in'?'green':'red'}">${c.type==='in'?'+':'-'} ${fmt(c.amount)}</div></div>`).join('')}
+      </div>
+      <div class="balance-card"><div class="card-header"><span>Tài sản cố định (${fmt(bs.totalAssetCost)})</span><button class="action-btn outline" onclick="showAsset()">+ Mua Tài sản</button></div>
+        ${assets.length===0 ? `<div class="empty">Chưa có tài sản</div>` : assets.map(a=>`<div class="item-row"><div class="item-icon" style="background:#378ADD"></div><div class="item-info"><div class="item-name">${a.name}</div><div class="item-sub">Mua: ${new Date(a.date).toLocaleDateString('vi-VN')} · Khấu hao ${a.months} tháng</div></div><div class="item-amount">${fmt(a.amount)}</div></div>`).join('')}
+      </div>
+    `;
+  }
+
   function showExpense(id){
-    editingExpId=id; const e=getExpenses().find(x=>x.id===id);
-    document.getElementById('expenseSheetTitle').textContent=id?'Sửa chi phí':'Thêm chi phí';
-    document.getElementById('expName').value=e?e.name:''; document.getElementById('expAmount').value=e?e.amount:'';
-    document.getElementById('expDate').value=toDateInput(e?e.date:new Date());
-    document.getElementById('deleteExpBtn').style.display=id?'block':'none';
+    editingExpId = id||null;
+    if(id){
+      const exp = getExpenses().find(e=>e.id===id);
+      document.getElementById('expenseSheetTitle').textContent='Chỉnh sửa chi phí';
+      document.getElementById('expName').value=exp.name; document.getElementById('expCat').value=exp.cat;
+      document.getElementById('expType').value=exp.type; document.getElementById('expAmount').value=exp.amount; document.getElementById('expDate').value=exp.date;
+      document.getElementById('deleteExpBtn').style.display='block';
+    } else {
+      document.getElementById('expenseSheetTitle').textContent='Thêm chi phí';
+      document.getElementById('expName').value=''; document.getElementById('expAmount').value=''; document.getElementById('expDate').value=toDateInput(new Date());
+      document.getElementById('deleteExpBtn').style.display='none';
+    }
     document.getElementById('expenseOverlay').classList.add('show');
   }
-  function hideExpense(){document.getElementById('expenseOverlay').classList.remove('show');}
+  function hideExpense(){ document.getElementById('expenseOverlay').classList.remove('show'); }
   function saveExpense(){
-    const e = getExpenses(), name=document.getElementById('expName').value, amount=parseFloat(document.getElementById('expAmount').value), type=document.getElementById('expType').value, date=document.getElementById('expDate').value;
-    if(editingExpId) { const idx=e.findIndex(x=>x.id===editingExpId); e[idx]={...e[idx], name, amount, type, date}; }
-    else e.push({id:'exp_'+Date.now(), name, amount, type, date, cat:document.getElementById('expCat').value});
-    setExpenses(e); hideExpense(); render(); toast('Đã lưu');
+    const name=document.getElementById('expName').value, cat=document.getElementById('expCat').value, type=document.getElementById('expType').value, amount=parseFloat(document.getElementById('expAmount').value), date=document.getElementById('expDate').value;
+    if(!name||isNaN(amount)){ toast('Điền đủ thông tin'); return; }
+    const expenses = getExpenses();
+    if(editingExpId){ const idx = expenses.findIndex(e=>e.id===editingExpId); expenses[idx] = {...expenses[idx], name, cat, type, amount, date}; } 
+    else expenses.push({id:'exp_'+Date.now(), name, cat, type, amount, date});
+    setExpenses(expenses); hideExpense(); render(); toast('Đã lưu chi phí');
   }
   function deleteExpense(){ setExpenses(getExpenses().filter(e=>e.id!==editingExpId)); hideExpense(); render(); toast('Đã xoá'); }
 
-  function showCapital(){ document.getElementById('capitalOverlay').classList.add('show'); document.getElementById('capDate').value=toDateInput(new Date());}
+  function showCog(id){
+    cogItemId = id; const item = RAW_ITEMS.find(r=>r.id===id); const p = getCogPrices()[id]||{avgCost:0, totalQty:0};
+    document.getElementById('cogSubtitle').textContent = item.name;
+    document.getElementById('cogPrice').value = ''; document.getElementById('cogQty').value = '';
+    document.getElementById('cogCurrentInfo').innerHTML = `Giá BQ hiện tại: <strong>${p.avgCost>0?(Math.round(p.avgCost*1000).toLocaleString('vi-VN')+' ₫ / 1000'+item.unit):'Chưa có'}</strong><br>Tổng đã nhập: <strong>${p.totalQty} ${item.unit}</strong>`;
+    document.getElementById('cogOverlay').classList.add('show');
+  }
+  function hideCog(){ document.getElementById('cogOverlay').classList.remove('show'); }
+  function saveCog(){
+    const price=parseFloat(document.getElementById('cogPrice').value), qty=parseFloat(document.getElementById('cogQty').value);
+    if(isNaN(price)||isNaN(qty)||qty<=0){ toast('Nhập sai số lượng/giá'); return; }
+    const prices = getCogPrices(); const p = prices[cogItemId]||{avgCost:0, totalQty:0}; const pricePerUnit = price/1000; 
+    prices[cogItemId] = {avgCost: (p.avgCost*p.totalQty + pricePerUnit*qty)/(p.totalQty+qty), totalQty: p.totalQty+qty};
+    setCogPrices(prices); hideCog(); render(); toast('Cập nhật Giá vốn thành công');
+  }
+
+  function showCapital(){ document.getElementById('capAmount').value=''; document.getElementById('capNote').value=''; document.getElementById('capDate').value=toDateInput(new Date()); document.getElementById('capitalOverlay').classList.add('show'); }
   function hideCapital(){ document.getElementById('capitalOverlay').classList.remove('show'); }
   function saveCapital(){
-    const c=getCapitals(); c.push({id:'cap_'+Date.now(), type:document.getElementById('capType').value, amount:parseFloat(document.getElementById('capAmount').value), note:document.getElementById('capNote').value, date:document.getElementById('capDate').value});
-    setCapitals(c); hideCapital(); render(); toast('Đã lưu');
+    const type=document.getElementById('capType').value, amount=parseFloat(document.getElementById('capAmount').value), note=document.getElementById('capNote').value, date=document.getElementById('capDate').value;
+    if(isNaN(amount)||amount<=0) return toast('Nhập số tiền hợp lệ');
+    const caps = getCapitals(); caps.push({id:'cap_'+Date.now(), type, amount, note, date});
+    setCapitals(caps); hideCapital(); render(); toast('Đã ghi nhận dòng vốn');
   }
 
-  function showAsset(){ document.getElementById('assetOverlay').classList.add('show'); document.getElementById('assetDate').value=toDateInput(new Date());}
+  function showAsset(){ document.getElementById('assetName').value=''; document.getElementById('assetAmount').value=''; document.getElementById('assetMonths').value='12'; document.getElementById('assetDate').value=toDateInput(new Date()); document.getElementById('assetOverlay').classList.add('show'); }
   function hideAsset(){ document.getElementById('assetOverlay').classList.remove('show'); }
   function saveAsset(){
-    const a=getAssets(); a.push({id:'ast_'+Date.now(), name:document.getElementById('assetName').value, amount:parseFloat(document.getElementById('assetAmount').value), months:parseInt(document.getElementById('assetMonths').value), date:document.getElementById('assetDate').value});
-    setAssets(a); hideAsset(); render(); toast('Đã lưu');
+    const name=document.getElementById('assetName').value, amount=parseFloat(document.getElementById('assetAmount').value), months=parseInt(document.getElementById('assetMonths').value), date=document.getElementById('assetDate').value;
+    if(!name||isNaN(amount)||isNaN(months)) return toast('Điền đủ thông tin tài sản');
+    const assets = getAssets(); assets.push({id:'ast_'+Date.now(), name, amount, months, date});
+    setAssets(assets); hideAsset(); render(); toast('Đã ghi nhận tài sản');
   }
 
-  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.opacity='1'; setTimeout(()=>t.style.opacity='0',2200); }
+  function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.style.opacity='1'; clearTimeout(t._tid); t._tid=setTimeout(()=>t.style.opacity='0',2200); }
 
   render();
 </script>

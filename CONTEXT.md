@@ -67,10 +67,11 @@ fnbapp/
 - Xuất báo cáo CSV
 - Dữ liệu đọc từ fnb_orders (POS ghi nhận sau mỗi đơn)
 
-### [ ] Finance — Báo cáo tài chính
+### [x] Finance — Báo cáo tài chính
 - Báo cáo P&L (lãi lỗ)
 - Bảng cân đối kế toán
 - Chi phí, vốn, khấu hao xe
+- Hoàn thành P&L, tính khấu hao tài sản và quản lý dòng vốn
 
 ### [ ] Schedule — Lịch trình địa điểm
 - Lịch bán theo địa điểm
@@ -81,7 +82,7 @@ fnbapp/
 1. Đính kèm file `CONTEXT.md` này vào đầu mỗi cuộc trò chuyện mới
 2. Đính kèm thêm file code cần chỉnh sửa nếu có
 3. Mô tả yêu cầu — Claude sẽ trả về file hoàn chỉnh đã sửa
-4. Paste code mới vào vscode.dev, commit lên GitHub
+4. Paste code mới vào vscode desktop, commit lên GitHub
 
 ## Lịch sử thay đổi
 - 2025-04: Khởi tạo dự án, hoàn thành màn hình POS v3
